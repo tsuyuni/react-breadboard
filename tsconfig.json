@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "module": "ES6",
+    "target": "ES2022",
+    "strict": true,
+    "declaration": true,
+    "moduleResolution": "node"
+  },
+  "include": ["src"]
+}
