@@ -10,5 +10,6 @@
     "declaration": true,
     "moduleResolution": "node"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "compileOnSave": true
 }
