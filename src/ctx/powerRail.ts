@@ -1,48 +1,51 @@
-/* constants */
+import { PITCH } from "../constants";
+import { Hole } from "./hole";
+
 const ROW = 2;
 const COL = 5;
-const PITCH = 16;
-const OUTER_HOLE_SIZE = 10;
-const INNER_HOLE_SIZE = 6;
-const OUTER_HOLE_COLOR = "#cccccc";
-const INNER_HOLE_COLOR = "#000000";
 
-const CHAMFER = (OUTER_HOLE_SIZE - INNER_HOLE_SIZE) / 2;
+export class PowerRail {
+  private ctx: OffscreenCanvasRenderingContext2D;
 
-export const powerRailUnit = () => {
-  const ctx = new OffscreenCanvas(
-    PITCH * (ROW - 1) + OUTER_HOLE_SIZE,
-    PITCH * (COL - 1) + OUTER_HOLE_SIZE
-  ).getContext("2d")!;
+  constructor(num: number) {
+    const powerRailUnit = this.createPowerRailUnit();
 
-  for (let ci = 0; ci < COL; ci++) {
-    for (let ri = 0; ri < ROW; ri++) {
-      ctx.fillStyle = OUTER_HOLE_COLOR;
-      ctx.fillRect(PITCH * ri, PITCH * ci, OUTER_HOLE_SIZE, OUTER_HOLE_SIZE);
-      ctx.fillStyle = INNER_HOLE_COLOR;
-      ctx.fillRect(
-        CHAMFER + PITCH * ri,
-        CHAMFER + PITCH * ci,
-        INNER_HOLE_SIZE,
-        INNER_HOLE_SIZE
-      );
+    this.ctx = new OffscreenCanvas(
+      powerRailUnit.width,
+      powerRailUnit.height * num + PITCH * (num - 1)
+    ).getContext("2d")!;
+
+    for (let i = 0; i < num; i++) {
+      this.ctx.drawImage(powerRailUnit, 0, (powerRailUnit.height + PITCH) * i);
     }
   }
 
-  return ctx;
-};
+  private createPowerRailUnit() {
+    const hole = new Hole();
 
-export const powerRail = (num: number) => {
-  const canvas = document.createElement("canvas");
-  canvas.width = 1000;
-  canvas.height = 1000;
-  const ctx = canvas.getContext("2d")!;
+    const ctx = new OffscreenCanvas(
+      PITCH * (ROW - 1) + hole.getWidth(),
+      PITCH * (COL - 1) + hole.getHeight()
+    ).getContext("2d")!;
 
-  const unitCtx = powerRailUnit();
+    for (let ci = 0; ci < COL; ci++) {
+      for (let ri = 0; ri < ROW; ri++) {
+        ctx.drawImage(hole.getCanvas(), PITCH * ri, PITCH * ci);
+      }
+    }
 
-  for (let i = 0; i < num; i++) {
-    ctx.drawImage(unitCtx.canvas, 0, i * unitCtx.canvas.height);
+    return ctx.canvas;
   }
 
-  return ctx;
-};
+  getCanvas() {
+    return this.ctx.canvas;
+  }
+
+  getWidth() {
+    return this.ctx.canvas.width;
+  }
+
+  getHeight() {
+    return this.ctx.canvas.height;
+  }
+}

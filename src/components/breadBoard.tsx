@@ -1,5 +1,6 @@
 import { createContext, JSX, useEffect, useRef, useState } from "react";
-import { powerRail } from "../ctx/powerRail";
+import { PowerRail } from "../ctx/powerRail";
+import { ColUnit } from "../ctx/col";
 
 export const breadBoardContext = createContext<{ canvas?: HTMLCanvasElement }>(
   null!
@@ -7,8 +8,12 @@ export const breadBoardContext = createContext<{ canvas?: HTMLCanvasElement }>(
 
 export const BreadBoard = ({
   children,
+  row = 10,
+  col = 30,
 }: {
   children?: JSX.Element | JSX.Element[];
+  row?: number;
+  col?: number;
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement>();
@@ -20,11 +25,17 @@ export const BreadBoard = ({
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d")!;
 
-    ctx.fillStyle = "#f3f1e9"; // 描画の塗り色を決める
-    ctx.fillRect(0, 0, 600, 400);
+    ctx.fillStyle = "#f3f1e9";
+    ctx.fillRect(0, 0, 400, 600);
 
-    ctx.fillStyle = "#d8d7d0";
-    ctx.fillRect(0, 185, 600, 30);
+    const gradient = ctx.createLinearGradient(185, 0, 215, 0);
+    gradient.addColorStop(0, "#d8d7d0");
+    gradient.addColorStop(0.3, "#e8e7e0");
+    gradient.addColorStop(0.7, "#e8e7e0");
+    gradient.addColorStop(1, "#d8d7d0");
+    ctx.fillStyle = gradient;
+
+    ctx.fillRect(185, 0, 30, 600);
 
     ctx.lineWidth = 2;
 
@@ -75,13 +86,21 @@ export const BreadBoard = ({
       }
     }
 
-    const pr = powerRail(5);
-    ctx.drawImage(pr.canvas, 300, 100);
+    const pr = new PowerRail(5);
+    ctx.drawImage(
+      pr.getCanvas(),
+      370 - pr.getWidth(),
+      300 - pr.getHeight() / 2
+    );
+    ctx.drawImage(pr.getCanvas(), 30, 300 - pr.getHeight() / 2);
+
+    const colUnit = new ColUnit(5);
+    ctx.drawImage(colUnit.getCanvas(), 80, 100);
   }, [canvasRef]);
 
   return (
     <breadBoardContext.Provider value={{ canvas }}>
-      <canvas ref={canvasRef} id="breadboard" width={600} height={400} />
+      <canvas ref={canvasRef} id="breadboard" width={400} height={600} />
       {children}
     </breadBoardContext.Provider>
   );
