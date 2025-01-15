@@ -1,4 +1,5 @@
 import { createContext, JSX, useEffect, useRef, useState } from "react";
+import { powerRail } from "../ctx/powerRail";
 
 export const breadBoardContext = createContext<{ canvas?: HTMLCanvasElement }>(
   null!
@@ -51,24 +52,31 @@ export const BreadBoard = ({
     ctx.lineTo(590, 340);
     ctx.stroke();
 
-    ctx.font = "20px serif";
-    ctx.fillStyle = "#ff0000";
-    ctx.fillText("+", 10, 380);
+    const newCanvas = document.createElement("canvas");
+    newCanvas.width = 100;
+    newCanvas.height = 100;
+    const newCtx = newCanvas.getContext("2d")!;
+    newCtx.font = "96px serif";
+    newCtx.fillStyle = "#ff0000";
+    newCtx.beginPath();
+    newCtx.fillText("+", 45, 50);
+    newCtx.stroke();
+
+    ctx.drawImage(newCanvas, 0, 370, 25, 25);
 
     ctx.fillStyle = "#00ffff";
     ctx.fillText("-", 10, 350);
 
     ctx.fillStyle = "#000000";
-    ctx.fillRect(40, 29, 6, 6);
-    ctx.fillRect(40, 45, 6, 6);
-    ctx.fillRect(56, 29, 6, 6);
-    ctx.fillRect(56, 45, 6, 6);
-    ctx.fillRect(72, 29, 6, 6);
-    ctx.fillRect(72, 45, 6, 6);
-    ctx.fillRect(88, 29, 6, 6);
-    ctx.fillRect(88, 45, 6, 6);
-    ctx.fillRect(104, 29, 6, 6);
-    ctx.fillRect(104, 45, 6, 6);
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        ctx.fillRect(40 + 96 * i + 16 * j, 29, 6, 6);
+        ctx.fillRect(40 + 96 * i + 16 * j, 45, 6, 6);
+      }
+    }
+
+    const pr = powerRail(5);
+    ctx.drawImage(pr.canvas, 300, 100);
   }, [canvasRef]);
 
   return (
