@@ -4,7 +4,7 @@ import { Hole } from "./hole";
 const ROW = 2;
 const COL = 5;
 
-export class PowerRail {
+export class PowerRails {
   private ctx: OffscreenCanvasRenderingContext2D;
 
   constructor(num: number) {
@@ -12,11 +12,16 @@ export class PowerRail {
 
     this.ctx = new OffscreenCanvas(
       powerRailUnit.width,
-      powerRailUnit.height * num + PITCH * (num - 1)
+      powerRailUnit.height * num +
+        (PITCH * 2 - new Hole().getHeight()) * (num - 1)
     ).getContext("2d")!;
 
     for (let i = 0; i < num; i++) {
-      this.ctx.drawImage(powerRailUnit, 0, (powerRailUnit.height + PITCH) * i);
+      this.ctx.drawImage(
+        powerRailUnit,
+        0,
+        (powerRailUnit.height + PITCH * 2 - new Hole().getHeight()) * i
+      );
     }
   }
 

@@ -1,20 +1,21 @@
 import { createContext, JSX, useEffect, useRef, useState } from "react";
-import { PowerRail } from "../ctx/powerRail";
-import { ColUnit } from "../ctx/col";
+import { PowerRails } from "../ctx/powerRail";
+import { Cols } from "../ctx/col";
+import { CenterDivider } from "../ctx/centerDivider";
 
-export const breadBoardContext = createContext<{ canvas?: HTMLCanvasElement }>(
-  null!
-);
+type BreadBoardProviderProps = { canvas?: HTMLCanvasElement };
+export const breadBoardContext = createContext<BreadBoardProviderProps>(null!);
 
+type BreadBoardProps = {
+  children?: JSX.Element | JSX.Element[];
+  row?: number;
+  col?: number;
+};
 export const BreadBoard = ({
   children,
   row = 10,
   col = 30,
-}: {
-  children?: JSX.Element | JSX.Element[];
-  row?: number;
-  col?: number;
-}) => {
+}: BreadBoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [canvas, setCanvas] = useState<HTMLCanvasElement>();
 
@@ -28,40 +29,10 @@ export const BreadBoard = ({
     ctx.fillStyle = "#f3f1e9";
     ctx.fillRect(0, 0, 400, 600);
 
-    const gradient = ctx.createLinearGradient(185, 0, 215, 0);
-    gradient.addColorStop(0, "#d8d7d0");
-    gradient.addColorStop(0.3, "#e8e7e0");
-    gradient.addColorStop(0.7, "#e8e7e0");
-    gradient.addColorStop(1, "#d8d7d0");
-    ctx.fillStyle = gradient;
-
-    ctx.fillRect(185, 0, 30, 600);
+    const centerDivider = new CenterDivider(30, 600);
+    ctx.drawImage(centerDivider.getCanvas(), 185, 0);
 
     ctx.lineWidth = 2;
-
-    ctx.strokeStyle = "#00ffff";
-    ctx.beginPath();
-    ctx.moveTo(30, 20);
-    ctx.lineTo(590, 20);
-    ctx.stroke();
-
-    ctx.strokeStyle = "#ff0000";
-    ctx.beginPath();
-    ctx.moveTo(30, 60);
-    ctx.lineTo(590, 60);
-    ctx.stroke();
-
-    ctx.strokeStyle = "#ff0000";
-    ctx.beginPath();
-    ctx.moveTo(30, 380);
-    ctx.lineTo(590, 380);
-    ctx.stroke();
-
-    ctx.strokeStyle = "#00ffff";
-    ctx.beginPath();
-    ctx.moveTo(30, 340);
-    ctx.lineTo(590, 340);
-    ctx.stroke();
 
     const newCanvas = document.createElement("canvas");
     newCanvas.width = 100;
@@ -78,24 +49,37 @@ export const BreadBoard = ({
     ctx.fillStyle = "#00ffff";
     ctx.fillText("-", 10, 350);
 
-    ctx.fillStyle = "#000000";
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 5; j++) {
-        ctx.fillRect(40 + 96 * i + 16 * j, 29, 6, 6);
-        ctx.fillRect(40 + 96 * i + 16 * j, 45, 6, 6);
-      }
-    }
-
-    const pr = new PowerRail(5);
+    const pr = new PowerRails(5);
     ctx.drawImage(
       pr.getCanvas(),
       370 - pr.getWidth(),
       300 - pr.getHeight() / 2
     );
-    ctx.drawImage(pr.getCanvas(), 30, 300 - pr.getHeight() / 2);
+    ctx.drawImage(pr.getCanvas(), 20, 300 - pr.getHeight() / 2);
 
-    const colUnit = new ColUnit(5);
-    ctx.drawImage(colUnit.getCanvas(), 80, 100);
+    const cols = new Cols(row / 2, col);
+    ctx.drawImage(cols.getCanvas(), 90, 100);
+
+    ctx.strokeStyle = "#c8c7c0";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(70, 0);
+    ctx.lineTo(70, 600);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#ff0000";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(10, 60);
+    ctx.lineTo(10, 540);
+    ctx.stroke();
+
+    ctx.strokeStyle = "#0088ff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, 60);
+    ctx.lineTo(60, 540);
+    ctx.stroke();
   }, [canvasRef]);
 
   return (
