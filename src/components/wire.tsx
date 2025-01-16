@@ -16,12 +16,31 @@ export const Wire = ({
   if (canvas) {
     const ctx = canvas.getContext("2d")!;
 
-    ctx.strokeStyle = "#c40000";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(43, 32);
-    ctx.lineTo(43, 100);
-    ctx.stroke();
+    const wireCtx = new OffscreenCanvas(100, 20).getContext("2d")!;
+    const gradient = wireCtx.createLinearGradient(0, 0, 6, 0);
+    gradient.addColorStop(0, "#aa0000");
+    gradient.addColorStop(0.5, "red");
+    gradient.addColorStop(1, "#aa0000");
+
+    wireCtx.strokeStyle = "#d0d0d0";
+    wireCtx.lineWidth = 3;
+    wireCtx.lineCap = "round";
+    wireCtx.beginPath();
+    wireCtx.moveTo(3, 1);
+    wireCtx.lineTo(3, 19);
+    wireCtx.stroke();
+
+    wireCtx.strokeStyle = gradient;
+    wireCtx.lineWidth = 6;
+    wireCtx.lineCap = "butt";
+    wireCtx.beginPath();
+    wireCtx.moveTo(3, 3);
+    wireCtx.lineTo(3, 17);
+    // ctx.quadraticCurveTo(43, 100, 53, 100);
+    // ctx.lineTo(100, 100);
+    wireCtx.stroke();
+
+    ctx.drawImage(wireCtx.canvas, 346, 298);
   }
 
   return <></>;
